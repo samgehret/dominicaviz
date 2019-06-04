@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <title>Fly to a location based on scroll position</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <style>
+        #map {
+            position: fixed;
+            width: 100%;
+        }
+
+        #features {
+            width: 30%;
+            margin-left: 50%;
+            font-family: sans-serif;
+            overflow-y: scroll;
+            background-color: #fafafa;
+            position: absolute;
+            right: 50px;
+            height: 300px;
+            top: 100px;
+            opacity: 0.7;
+        }
+
+        section {
+            padding: 50px 50px;
+            line-height: 25px;
+            border-bottom: 1px solid #ddd;
+            opacity: 0.25;
+            font-size: 13px;
+        }
+
+        section.active {
+            opacity: 1;
+        }
+
+        section:last-child {
+            border-bottom: none;
+            margin-bottom: 200px;
+        }
+
+        .map-overlay {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.8);
+            margin-right: 20px;
+            font-family: Arial, sans-serif;
+            overflow: auto;
+            border-radius: 3px;
+        }
+
+        #legend {
+            padding: 10px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            line-height: 18px;
+
+            margin-bottom: 40px;
+            width: 150px;
+        }
+
+        .legend-key {
+            display: inline-block;
+            border-radius: 20%;
+            width: 10px;
+            height: 10px;
+            margin-right: 5px;
+        }
+    </style>
+
+    <div id='map'></div>
+    <div class='map-overlay' id='legend'></div>
+    <div id='features'>
+        <section id='worldview' class='active'>
+            <h3>Hurricane Maria</h3>
+            <p>Hurricane Maria was a deadly Category 5 hurricane that devastated Dominica, the U.S. Virgin Islands, and
+                Puerto Rico in September 2017. It is regarded as the worst natural disaster on record to affect those
+                islands and is also the deadliest Atlantic hurricane since Jeanne in 2004. Maria wrought catastrophic
+                devastation to the entirety of Dominica, which suffered an island-wide communication blackout. Much of
+                the housing stock and infrastructure were left beyond repair, while the island's lush vegetation was
+                practically eradicated.</p>
+        </section>
+        <section id='geography'>
+            <h3>Geography</h3>
+            <p>Dominica, known as "The Nature Island of the Caribbean" due to its spectacular, lush, and varied flora
+                and fauna, which are protected by an extensive natural park system; the most mountainous of the Lesser
+                Antilles, its volcanic peaks are cones of lava craters and include Boiling Lake, the second-largest,
+                thermally active lake in the world possesses the most pristine wilderness in the Caribbean.[31]
+                Originally, it was protected by sheer mountains which led the European powers to build ports and
+                agricultural settlements on other islands</p>
+        </section>
+        <section id='rosseau'>
+            <h3>Roseau</h3>
+            <p>Roseau (Dominican Creole: Wozo) is the capital and largest city of Dominica, with a population of 14,725
+                (as of 2011[1]). It is a small and compact urban settlement, in the Saint George parish and surrounded
+                by the Caribbean Sea, the Roseau River and Morne Bruce. Built on the site of the ancient Kalinago Indian
+                village of Sairi, it is the oldest and most important urban settlement on the island of Dominica."</p>
+        </section>
+        <section id='portsmouth'>
+            <h3>Portsmouth</h3>
+            <p>Portsmouth is the second largest town in Dominica, with 2,977 inhabitants.[1] It lies on the Indian River
+                on Dominica's northwest coast, in Saint John Parish. Cabrits National Park is located on a peninsula to
+                the north of town. Portsmouth has its own sea port in Prince Rupert Bay. Portsmouth was initially chosen
+                as the capital of Dominica, but only served in that capacity in 1760. After malaria broke out there the
+                same year, the capital was moved to Roseau, where it remains.</p>
+        </section>
+        <section id='risk-areas'>
+            <h3>Risk Areas</h3>
+            <p>The southwestern part of Dominica, just south of Roseau is surrounded by a mountainous region. Morne
+                Anglais and Morne Plat are among the islands tallest mountains. Their steep nature and proximity to a
+                highly populated area creates a high degree of risk for near by residents. </p>
+        </section>
+        <section id='loubiere'>
+            <h3>Loubiere</h3>
+            <p>Loubiere sits near by on the coast at the base of three large mountains. There are two rivers which
+                originate in the mountains and end at the coast. River Gillon and River Canari. Loubiere sits at the
+                confluence of these two rivers. This makes it a prime risk candidate in the event of extensive rainfall
+                or storm surges.
+            </p>
+        </section>
+        <section id='flooding'>
+            <h3>Damage from Maria</h3>
+            <p>Indeed that is what happened during hurricane Maria. With winds topping 190 MPH, and extensive rain, this
+                region was particularly badly damaged by flooding, landslides, and rock falls. As you can see from the
+                map, dozens of homes were washed away by the flash floods from these two rivers.</p>
+        </section>
+        <section id='other-damage'>
+            <h3>Widespread Damage</h3>
+            <p>However, it wasn' just Loubiere which was affected. There was widespread damage on the island, including
+                the most populous city of Roseau. Overall, the hurricane damaged the roofs of as much as 98% of the
+                island's buildings,[74] including those serving as shelters;[72] half of the houses had their frames
+                destroyed.[74] Its ferocious winds defoliated nearly all vegetation, splintering or uprooting thousands
+                of trees and decimating the island's lush rainforests.[81] The agricultural sector, a vital source of
+                income for the country, was completely wiped out: 100% of banana and tuber plantations was lost, as well
+                as vast amounts of livestock and farm equipment.</p>
+        </section>
+    </div>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic2FtZ2VocmV0IiwiYSI6ImNqZWExcDdwNTAxYnEyeG1tZnQ4MTNsODkifQ.68r_UjBeRkubf5eUs4uw-g';
+
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/samgehret/cjwgzkqhs45x91cs7an27zkez?fresh=true',
+            center: [-61.347197, 15.436208],
+            zoom: 4
+        });
+
+        var chapters = {
+            'worldview': {
+                bearing: 27,
+                center: [-61.347197, 15.436208],
+                zoom: 4,
+                bearing: 0,
+                pitch: 0
+            },
+            'geography': {
+                duration: 6000,
+                center: [-61.318709, 15.338506],
+                zoom: 10.5,
+                speed: 5.0,
+                pitch: 80,
+                bearing: 90,
+            },
+            'rosseau': {
+                bearing: 0,
+                center: [-61.380526, 15.297375],
+                zoom: 15,
+                speed: 1.0,
+                pitch: 80
+            },
+            'portsmouth': {
+                bearing: 0,
+                center: [-61.455707, 15.556474],
+                zoom: 16,
+                speed: 1.0,
+                pitch: 80
+            },
+            'risk-areas': {
+                duration: 6000,
+                center: [-61.364636, 15.262837],
+                zoom: 13,
+                speed: 5.0,
+                pitch: 80,
+                bearing: 90,
+            },
+            'loubiere': {
+                duration: 6000,
+                center: [-61.372, 15.277,],
+                zoom: 16.5,
+                speed: 5.0,
+                pitch: 80,
+                bearing: 90,
+            },
+            'flooding': {
+                duration: 6000,
+                center: [-61.372, 15.277,],
+                zoom: 16,
+                speed: 5.0,
+                pitch: 80,
+                bearing: 90,
+            },
+            'other-damage': {
+                bearing: 0,
+                center: [-61.380526, 15.297375],
+                zoom: 16,
+                speed: 1.0,
+                pitch: 80,
+                duration: 10000
+            }
+        };
+
+        // On every scroll event, check which element is on screen
+        document.getElementById('features').onscroll = function () {
+            var chapterNames = Object.keys(chapters);
+            for (var i = 0; i < chapterNames.length; i++) {
+                var chapterName = chapterNames[i];
+                if (isElementOnScreen(chapterName)) {
+                    setActiveChapter(chapterName);
+                    break;
+                }
+            }
+        };
+
+        var activeChapterName = 'worldview';
+        function setActiveChapter(chapterName) {
+            // if(activeChapterName === 'risk-areas' || activeChapterName === 'loubiere' || activeChapterName === 'flooding' || activeChapterName === 'other-damage') {
+            //     map.setPaintProperty('waterway-rivers', 'line-opacity', 1)
+            // }
+            // else {
+            //     map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
+            // }
+
+            // if (activeChapterName === 'flooding' || activeChapterName === 'other-damage') {
+            //     map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 1)
+            // }
+            // else {
+            //     map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+            // }
+
+            if (chapterName === activeChapterName) return;
+
+            map.flyTo(chapters[chapterName]);
+
+            document.getElementById(chapterName).setAttribute('class', 'active');
+            document.getElementById(activeChapterName).setAttribute('class', '');
+
+            activeChapterName = chapterName;
+
+            const worldTitle = 'WindSpeed'
+            const worldLayers = ['40-50mph', '60-100mph', '110-130mph', '140-190mph'];
+            const worldColors = ['#22f725', '#e4f250', '#f48a1f', '#f13737'];
+
+            const landslideLayers = ['River', 'Structure', 'Flash Flooding', 'Debris Flow', 'Rock Fall', 'Debris Slide'];
+            const landslideColors = ['#38e8f5', '#f014e9', '#332cf2', '#eff718', '#f5680a', '#ef1f1f'];
+
+            const elevationTitle = 'Elevation'
+            const elevationLayers = ['Low Elevation', 'High Elevation'];
+            const elevationColors = ['#3ff34b', '#e70d0d'];
+
+            const riskLayers = ['River', 'Low Elevation', 'High Elevation'];
+            const riskColors = ['#38e8f5', '#3ff34b', '#e70d0d'];
+
+            const buildingLayers = ['Structure'];
+            const buildingColors = ['#f014e9'];
+
+
+            const loubiereLayers = ['River', 'Structure'];
+            const loubiereColors = ['#38e8f5', '#f014e9'];
+
+            switch (activeChapterName) {
+                case 'worldview':
+                    setLegend(worldLayers, worldColors, worldTitle)
+                    map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+                    map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
+                    map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 0)
+                    break;
+                case 'geography':
+                    setLegend(elevationLayers, elevationColors, elevationTitle)
+                    map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+                    map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
+                    map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 1)
+                    break;
+                case 'rosseau':
+                    setLegend(buildingLayers, buildingColors)
+                    map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+                    map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
+                    map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 0)
+                    break;
+                case 'portsmouth':
+                    setLegend(buildingLayers, buildingColors)
+                    map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+                    map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
+                    map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 0)
+                    break;
+                case 'risk-areas':
+                    setLegend(riskLayers, riskColors)
+                    map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+                    map.setPaintProperty('waterway-rivers', 'line-opacity', 1)
+                    map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 1)
+                    break;
+                case 'loubiere':
+                    setLegend(loubiereLayers, loubiereColors)
+                    map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+                    map.setPaintProperty('waterway-rivers', 'line-opacity', 1)
+                    map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 0)
+                    break;
+                case 'flooding':
+                    setLegend(landslideLayers, landslideColors)
+                    map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 1)
+                    map.setPaintProperty('waterway-rivers', 'line-opacity', 1)
+                    break;
+                case 'other-damage':
+                    break;
+            }
+        }
+
+        function isElementOnScreen(id) {
+            var element = document.getElementById(id);
+            var bounds = element.getBoundingClientRect();
+            return bounds.top < window.innerHeight && bounds.bottom > 100;
+        }
+
+        function setLegend(layerArray, colorArray, legendTitle) {
+            removeLegend()
+            if (legendTitle) {
+                var title = document.createElement('div')
+                title.innerHTML = legendTitle
+                legend.appendChild(title);
+                title.className = 'legend-key'
+            }
+
+            for (i = 0; i < layerArray.length; i++) {
+                var layer = layerArray[i];
+                var color = colorArray[i];
+
+                var item = document.createElement('div');
+                var key = document.createElement('span');
+                key.className = 'legend-key';
+                key.style.backgroundColor = color;
+
+                var value = document.createElement('span');
+                value.innerHTML = layer;
+                item.appendChild(key);
+                item.appendChild(value);
+                legend.appendChild(item);
+            }
+        }
+
+        function removeLegend() {
+            let legend = document.getElementById('legend')
+            while (legend.hasChildNodes()) {
+                legend.removeChild(legend.lastChild);
+            }
+        }
+
+        map.on('load', function () {
+            var layers = ['40-50mph', '60-100mph', '110-130mph', '140-190mph'];
+            var colors = ['#22f725', '#e4f250', '#f48a1f', '#f13737'];
+            const worldTitle = 'WindSpeed (MPH)'
+            setLegend(layers, colors, worldTitle)
+
+        });
+
+    </script>
+
+</body>
+
+</html>
