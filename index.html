@@ -166,6 +166,27 @@
             zoom: 4
         });
 
+        const worldTitle = 'WindSpeed'
+        const worldLayers = ['40-50mph', '60-100mph', '110-130mph', '140-190mph'];
+        const worldColors = ['#22f725', '#e4f250', '#f48a1f', '#f13737'];
+
+        const landslideLayers = ['River', 'Structure', 'Flash Flooding', 'Debris Flow', 'Rock Fall', 'Debris Slide'];
+        const landslideColors = ['#38e8f5', '#f014e9', '#332cf2', '#eff718', '#f5680a', '#ef1f1f'];
+
+        const elevationTitle = 'Elevation'
+        const elevationLayers = ['Low Elevation', 'High Elevation'];
+        const elevationColors = ['#3ff34b', '#e70d0d'];
+
+        const riskLayers = ['River', 'Low Elevation', 'High Elevation'];
+        const riskColors = ['#38e8f5', '#3ff34b', '#e70d0d'];
+
+        const buildingLayers = ['Structure'];
+        const buildingColors = ['#f014e9'];
+
+
+        const loubiereLayers = ['River', 'Structure'];
+        const loubiereColors = ['#38e8f5', '#f014e9'];
+
         var chapters = {
             'worldview': {
                 bearing: 27,
@@ -175,58 +196,57 @@
                 pitch: 0
             },
             'geography': {
-                duration: 6000,
                 center: [-61.318709, 15.338506],
                 zoom: 10.5,
-                speed: 5.0,
+                speed: 1.0,
                 pitch: 80,
-                bearing: 90,
+                bearing: 90
             },
             'rosseau': {
                 bearing: 0,
                 center: [-61.380526, 15.297375],
                 zoom: 15,
                 speed: 1.0,
-                pitch: 80
+                pitch: 80,
+                speed: 2.0
             },
             'portsmouth': {
                 bearing: 0,
                 center: [-61.455707, 15.556474],
                 zoom: 16,
                 speed: 1.0,
-                pitch: 80
+                pitch: 80,
+                speed: 2.0
             },
             'risk-areas': {
-                duration: 6000,
                 center: [-61.364636, 15.262837],
                 zoom: 13,
-                speed: 5.0,
+                speed: 2.0,
                 pitch: 80,
                 bearing: 90,
+                speed: 5.0
             },
             'loubiere': {
-                duration: 6000,
-                center: [-61.372, 15.277,],
+                center: [-61.372, 15.277],
                 zoom: 16.5,
-                speed: 5.0,
+                speed: 2.0,
                 pitch: 80,
                 bearing: 90,
+                speed: 5.0
             },
             'flooding': {
-                duration: 6000,
-                center: [-61.372, 15.277,],
-                zoom: 16,
-                speed: 5.0,
+                center: [-61.372, 15.277],
+                zoom: 15.9,
                 pitch: 80,
                 bearing: 90,
+                speed: 1.0
             },
             'other-damage': {
-                bearing: 0,
+                bearing: 90,
                 center: [-61.380526, 15.297375],
-                zoom: 16,
-                speed: 1.0,
-                pitch: 80,
-                duration: 10000
+                zoom: 15,
+                speed: 0.5,
+                pitch: 40
             }
         };
 
@@ -244,49 +264,16 @@
 
         var activeChapterName = 'worldview';
         function setActiveChapter(chapterName) {
-            // if(activeChapterName === 'risk-areas' || activeChapterName === 'loubiere' || activeChapterName === 'flooding' || activeChapterName === 'other-damage') {
-            //     map.setPaintProperty('waterway-rivers', 'line-opacity', 1)
-            // }
-            // else {
-            //     map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
-            // }
-
-            // if (activeChapterName === 'flooding' || activeChapterName === 'other-damage') {
-            //     map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 1)
-            // }
-            // else {
-            //     map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
-            // }
 
             if (chapterName === activeChapterName) return;
 
             map.flyTo(chapters[chapterName]);
+            console.log('getting here')
 
             document.getElementById(chapterName).setAttribute('class', 'active');
             document.getElementById(activeChapterName).setAttribute('class', '');
 
             activeChapterName = chapterName;
-
-            const worldTitle = 'WindSpeed'
-            const worldLayers = ['40-50mph', '60-100mph', '110-130mph', '140-190mph'];
-            const worldColors = ['#22f725', '#e4f250', '#f48a1f', '#f13737'];
-
-            const landslideLayers = ['River', 'Structure', 'Flash Flooding', 'Debris Flow', 'Rock Fall', 'Debris Slide'];
-            const landslideColors = ['#38e8f5', '#f014e9', '#332cf2', '#eff718', '#f5680a', '#ef1f1f'];
-
-            const elevationTitle = 'Elevation'
-            const elevationLayers = ['Low Elevation', 'High Elevation'];
-            const elevationColors = ['#3ff34b', '#e70d0d'];
-
-            const riskLayers = ['River', 'Low Elevation', 'High Elevation'];
-            const riskColors = ['#38e8f5', '#3ff34b', '#e70d0d'];
-
-            const buildingLayers = ['Structure'];
-            const buildingColors = ['#f014e9'];
-
-
-            const loubiereLayers = ['River', 'Structure'];
-            const loubiereColors = ['#38e8f5', '#f014e9'];
 
             switch (activeChapterName) {
                 case 'worldview':
@@ -351,6 +338,7 @@
             }
 
             for (i = 0; i < layerArray.length; i++) {
+                console.log('looping')
                 var layer = layerArray[i];
                 var color = colorArray[i];
 
