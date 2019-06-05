@@ -1,3 +1,4 @@
+\
 <!DOCTYPE html>
 <html>
 
@@ -34,7 +35,9 @@
             margin-left: 50%;
             font-family: sans-serif;
             overflow-y: scroll;
-            background-color: #fafafa;
+            background-color: black;
+            border-color: white;
+            border-width: 100px;
             position: absolute;
             right: 50px;
             height: 300px;
@@ -48,6 +51,7 @@
             border-bottom: 1px solid #ddd;
             opacity: 0.25;
             font-size: 13px;
+            color: white;
         }
 
         section.active {
@@ -206,17 +210,16 @@
                 bearing: 0,
                 center: [-61.380526, 15.297375],
                 zoom: 15,
-                speed: 1.0,
+                speed: 0.5,
                 pitch: 80,
-                speed: 2.0
             },
             'portsmouth': {
                 bearing: 0,
                 center: [-61.455707, 15.556474],
                 zoom: 16,
-                speed: 1.0,
+                speed: 0.5,
                 pitch: 80,
-                speed: 2.0
+                curve: 1.0
             },
             'risk-areas': {
                 center: [-61.364636, 15.262837],
@@ -224,7 +227,7 @@
                 speed: 2.0,
                 pitch: 80,
                 bearing: 90,
-                speed: 5.0
+                speed: 1.0
             },
             'loubiere': {
                 center: [-61.372, 15.277],
@@ -232,41 +235,46 @@
                 speed: 2.0,
                 pitch: 80,
                 bearing: 90,
-                speed: 5.0
+                speed: 1.0
             },
             'flooding': {
                 center: [-61.372, 15.277],
                 zoom: 15.9,
                 pitch: 80,
                 bearing: 90,
-                speed: 1.0
+                speed: 0.2
             },
             'other-damage': {
                 bearing: 90,
                 center: [-61.380526, 15.297375],
-                zoom: 15,
+                zoom: 13,
                 speed: 0.5,
                 pitch: 40
             }
         };
 
-        // On every scroll event, check which element is on screen
-        document.getElementById('features').onscroll = function () {
+        function scroll() {
+            console.log('listening for scroll')
             var chapterNames = Object.keys(chapters);
             for (var i = 0; i < chapterNames.length; i++) {
+                // console.log('looping')
                 var chapterName = chapterNames[i];
                 if (isElementOnScreen(chapterName)) {
                     setActiveChapter(chapterName);
                     break;
                 }
             }
-        };
+        }
+
+        // On every scroll event, check which element is on screen
+        document.getElementById('features').addEventListener('scroll', scroll)
 
         var activeChapterName = 'worldview';
         function setActiveChapter(chapterName) {
 
             if (chapterName === activeChapterName) return;
-
+            console.log('disabling')
+            // document.getElementById('features').removeEventListener('scroll', scroll)
             map.flyTo(chapters[chapterName]);
             console.log('getting here')
 
@@ -275,51 +283,102 @@
 
             activeChapterName = chapterName;
 
-            switch (activeChapterName) {
-                case 'worldview':
-                    setLegend(worldLayers, worldColors, worldTitle)
-                    map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
-                    map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
-                    map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 0)
-                    break;
-                case 'geography':
-                    setLegend(elevationLayers, elevationColors, elevationTitle)
-                    map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
-                    map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
-                    map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 1)
-                    break;
-                case 'rosseau':
-                    setLegend(buildingLayers, buildingColors)
-                    map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
-                    map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
-                    map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 0)
-                    break;
-                case 'portsmouth':
-                    setLegend(buildingLayers, buildingColors)
-                    map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
-                    map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
-                    map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 0)
-                    break;
-                case 'risk-areas':
-                    setLegend(riskLayers, riskColors)
-                    map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
-                    map.setPaintProperty('waterway-rivers', 'line-opacity', 1)
-                    map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 1)
-                    break;
-                case 'loubiere':
-                    setLegend(loubiereLayers, loubiereColors)
-                    map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
-                    map.setPaintProperty('waterway-rivers', 'line-opacity', 1)
-                    map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 0)
-                    break;
-                case 'flooding':
-                    setLegend(landslideLayers, landslideColors)
-                    map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 1)
-                    map.setPaintProperty('waterway-rivers', 'line-opacity', 1)
-                    break;
-                case 'other-damage':
-                    break;
+            if (activeChapterName === 'worldview') {
+                setLegend(worldLayers, worldColors, worldTitle)
+                map.setLayoutProperty('dominica-landslide-boundary', 'visibility', 'none')
+                map.setLayoutProperty('waterway-rivers', 'visibility', 'none')
+                // map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 0)
             }
+            else if (activeChapterName === 'geography') {
+                setLegend(elevationLayers, elevationColors, elevationTitle)
+                map.setLayoutProperty('dominica-landslide-boundary', 'visibility', 'none')
+                map.setLayoutProperty('waterway-rivers', 'visibility', 'none')
+                // map.setLayoutProperty('dominica-landslide-boundary', 'visibility', 'none')
+                // map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
+                // map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 1)
+            }
+            else if (activeChapterName === 'rosseau') {
+                setLegend(buildingLayers, buildingColors)
+                // map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+                // map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
+                map.setLayoutProperty('elevation-geojson-clipped', 'visibility', 'none')
+            }
+            else if (activeChapterName === 'portsmouth') {
+                setLegend(buildingLayers, buildingColors)
+                // map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+                // map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
+                // map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 0)
+                map.setLayoutProperty('waterway-rivers', 'visibility', 'none')
+            }
+            else if (activeChapterName === 'risk-areas') {
+                setLegend(riskLayers, riskColors)
+                // map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+                map.setLayoutProperty('waterway-rivers', 'visibility', 'visible')
+                map.setLayoutProperty('elevation-geojson-clipped', 'visibility', 'visible')
+            }
+            else if (activeChapterName === 'loubiere') {
+                setLegend(loubiereLayers, loubiereColors)
+                // map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+                // // map.setPaintProperty('waterway-rivers', 'line-opacity', 1)
+                map.setLayoutProperty('elevation-geojson-clipped', 'visibility', 'none')
+                map.setLayoutProperty('dominica-landslide-boundary', 'visibility', 'none')
+                
+            }
+            else if (activeChapterName === 'flooding') {
+                setLegend(landslideLayers, landslideColors)
+                map.setLayoutProperty('dominica-landslide-boundary', 'visibility', 'visible')
+                // map.setPaintProperty('waterway-rivers', 'line-opacity', 1)
+                map.setLayoutProperty('waterway-rivers', 'visibility', 'visible')
+            }
+
+
+            // switch (activeChapterName) {
+            //     case 'worldview':
+            //         setLegend(worldLayers, worldColors, worldTitle)
+            //         map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+            //         // map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
+            //         map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 0)
+            //         break;
+            //     case 'geography':
+            //         setLegend(elevationLayers, elevationColors, elevationTitle)
+            //         map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+            //         // map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
+            //         map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 1)
+            //         break;
+            //     case 'rosseau':
+            //         setLegend(buildingLayers, buildingColors)
+            //         map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+            //         // map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
+            //         map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 0)
+            //         break;
+            //     case 'portsmouth':
+            //         setLegend(buildingLayers, buildingColors)
+            //         map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+            //         // map.setPaintProperty('waterway-rivers', 'line-opacity', 0)
+            //         map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 0)
+            //         break;
+            //     case 'risk-areas':
+            //         setLegend(riskLayers, riskColors)
+            //         map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+            //         // map.setPaintProperty('waterway-rivers', 'line-opacity', 1)
+            //         map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 1)
+            //         break;
+            //     case 'loubiere':
+            //         setLegend(loubiereLayers, loubiereColors)
+            //         map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 0)
+            //         // map.setPaintProperty('waterway-rivers', 'line-opacity', 1)
+            //         map.setPaintProperty('elevation-geojson-clipped', 'fill-extrusion-opacity', 0)
+            //         break;
+            //     case 'flooding':
+            //         setLegend(landslideLayers, landslideColors)
+            //         map.setPaintProperty('dominica-landslide-boundary', 'fill-opacity', 1)
+            //         map.setPaintProperty('waterway-rivers', 'line-opacity', 1)
+            //         break;
+            //     case 'other-damage':
+            //         break;
+
+            // }
+            // document.getElementById('features').addEventListener('scroll', scroll)
         }
 
         function isElementOnScreen(id) {
@@ -338,7 +397,6 @@
             }
 
             for (i = 0; i < layerArray.length; i++) {
-                console.log('looping')
                 var layer = layerArray[i];
                 var color = colorArray[i];
 
